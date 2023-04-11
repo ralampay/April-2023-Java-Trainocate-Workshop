@@ -15,4 +15,9 @@ public class SalesReport extends Report {
     public void setTotalAmount(float totalAmount) {
         this.totalAmount = totalAmount;
     }
+
+    // Override
+    public String toString() {
+        return super.getName() + " - " + this.totalAmount;
+    }
 }

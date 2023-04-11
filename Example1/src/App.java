@@ -9,6 +9,8 @@ public class App {
         System.out.println("Report 2: " + report2.getName());
 
         SalesReport salesReport = new SalesReport("Sales Report 1", 100.00f);
-        System.out.println("Sales Report: " + salesReport.getName() + " Total Amount: " + salesReport.getTotalAmount());
+        System.out.println("Sales Report: " + salesReport.getName() + " Total Amount: ");
+
+        System.out.println(salesReport);
     }
 }
