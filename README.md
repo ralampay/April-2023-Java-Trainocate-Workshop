@@ -34,4 +34,8 @@ git commit -m "Added stuff to README.md"
 git push oirigin master
 ```
 
+### Cloning a Repository
 
+```
+git clone git@github.com:ralampay/April-2023-Java-Trainocate-Workshop.git
+```
