@@ -39,3 +39,9 @@ git push origin master
 ```
 git clone git@github.com:ralampay/April-2023-Java-Trainocate-Workshop.git
 ```
+
+### Pull Changes
+
+```
+git pull origin master
+```
