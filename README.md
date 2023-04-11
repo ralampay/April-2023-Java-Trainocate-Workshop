@@ -27,3 +27,11 @@ git add --all
 ```
 git commit -m "Added stuff to README.md"
 ```
+
+3. Push those changes to the remote repository
+
+```
+git push oirigin master
+```
+
+
