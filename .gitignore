@@ -1,1 +1,3 @@
 Example1/bin/*.class
+Example2/bin/*.class
+*.class
