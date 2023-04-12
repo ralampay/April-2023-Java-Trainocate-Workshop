@@ -1,4 +1,5 @@
 Example1/bin/*.class
 Example2/bin/*.class
 Example3/bin/*.class
+Example4/bin/*.class
 *.class
