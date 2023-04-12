@@ -26,8 +26,19 @@ public class App {
         positions.add(positionFranchiseManager);
         positions.add(positionFranchiseDirector);
 
-        for (HashMap<String, Object> position : positions) {
-            System.out.println("ID: " + position.get("id") + " Name: " + position.get("name"));
-        }
+        HashMap<String, Object> dealer1 = new HashMap<String, Object>();
+        dealer1.put("id", 1);
+        dealer1.put("firstName", "Raphael");
+        dealer1.put("lastName", "Alampay");
+        dealer1.put("dateOfBirth", "1988-04-19");
+        dealer1.put("position", positionFranchiseManager);
+
+        System.out.println("ID: " + dealer1.get("id"));
+        System.out.println("Name: " + dealer1.get("lastName") + ", " + dealer1.get("firstName"));
+        System.out.println("Date of Birth: " + dealer1.get("dateOfBirth"));
+
+        // Explicit Casting: Converts one data type to another by declaring the data type in () to the left of the value
+        HashMap<String, Object> tempPosition = (HashMap<String, Object>)dealer1.get("position");
+        System.out.println("Position: " + tempPosition.get("name"));
     }
 }
