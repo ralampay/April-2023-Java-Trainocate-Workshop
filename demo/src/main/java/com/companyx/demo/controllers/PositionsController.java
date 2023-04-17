@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,15 +53,18 @@ public class PositionsController {
     // Enpoint to add a new position
     // POST /api/positions
     @RequestMapping(value={"", "/"}, method=RequestMethod.POST)
-    public String create() {
+    public String create(@RequestBody String params) {
+        Gson gson = new Gson();
+
+        HashMap<String, Object> requestParams = gson.fromJson(params, HashMap.class);
+
         int newId = 3;
-        String newName = "New Position";
+        String newName = requestParams.get("name").toString();
 
         HashMap<String, Object> item = new HashMap<String, Object>();
         item.put("id", newId);
         item.put("name", newName);
 
-        Gson gson = new Gson();
         String payload = gson.toJson(item);
 
         return payload;
