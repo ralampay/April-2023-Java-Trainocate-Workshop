@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.companyx.demo.models.Position;
+import com.companyx.demo.repositories.PositionRepository;
 import com.companyx.demo.services.PositionsService;
 import com.google.gson.Gson;
 
@@ -22,15 +24,18 @@ public class PositionsController {
 
     @Autowired
     private PositionsService positionsService;
+
+    @Autowired
+    private PositionRepository positionRepository;
     
     // Endpoint to return all positions
     // GET /api/positions
     @RequestMapping(value={"", "/"})
     public String index() {
-        List<HashMap<String, Object>> items = positionsService.getAll();
-
         Gson gson = new Gson();
-        String payload = gson.toJson(items);
+
+        List<Position> positions = positionRepository.findAll();
+        String payload = gson.toJson(positions);
 
         return payload;
     }
