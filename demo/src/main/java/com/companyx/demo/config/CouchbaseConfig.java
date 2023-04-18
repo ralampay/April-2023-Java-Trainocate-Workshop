@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.couchbase.config.AbstractCouchbaseConfiguration;
+import org.springframework.data.couchbase.repository.config.EnableCouchbaseRepositories;
 
 @Configuration
+@EnableCouchbaseRepositories(basePackages = {"com.companyx.demo.repositories"})
 public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
     @Override

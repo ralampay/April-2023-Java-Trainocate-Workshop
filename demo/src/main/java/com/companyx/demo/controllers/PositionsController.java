@@ -2,6 +2,8 @@ package com.companyx.demo.controllers;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -43,13 +45,22 @@ public class PositionsController {
     // Endpoint to return a single position given an id
     // GET /api/positions/:id
     @RequestMapping(value="/{id}")
-    public String show(@PathVariable int id) {
-        HashMap<String, Object> item = positionsService.getById(id);
-
+    public String show(@PathVariable String id) {
         Gson gson = new Gson();
-        String payload = gson.toJson(item);
+        Optional<Position> res = positionRepository.findById(id);
 
-        return payload;
+        if(res.isPresent()) {
+            String payload = gson.toJson(res.get());
+
+            return payload;
+        } else {
+            HashMap<String, Object> result = new HashMap<String, Object>();
+            result.put("message", "Not found");
+
+            String payload = gson.toJson(result);
+
+            return payload;
+        }
     }
 
     // Morning Exercise:
@@ -63,14 +74,14 @@ public class PositionsController {
 
         HashMap<String, Object> requestParams = gson.fromJson(params, HashMap.class);
 
-        int newId = 3;
+        String newId = UUID.randomUUID().toString();
         String newName = requestParams.get("name").toString();
 
-        HashMap<String, Object> item = new HashMap<String, Object>();
-        item.put("id", newId);
-        item.put("name", newName);
+        Position position = new Position(newId, newName);
 
-        String payload = gson.toJson(item);
+        positionRepository.save(position);
+
+        String payload = gson.toJson(position);
 
         return payload;
     }
