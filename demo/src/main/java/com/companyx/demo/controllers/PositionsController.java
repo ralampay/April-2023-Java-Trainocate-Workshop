@@ -89,17 +89,39 @@ public class PositionsController {
     // Endpoint to edit a position
     // PUT /api/positions/:id
     @RequestMapping(value="/{id}", method=RequestMethod.PUT)
-    public String edit(@PathVariable int id) {
-        return "Editing position with id " + id;
+    public String edit(@PathVariable String id, @RequestBody String params) {
+        Gson gson = new Gson();
+        Optional<Position> res = positionRepository.findById(id);
+
+        if(res.isPresent()) {
+            Position pos = res.get();
+
+            HashMap<String, Object> requestParams = gson.fromJson(params, HashMap.class);
+
+            String name = requestParams.get("name").toString();
+
+            pos.setName(name);
+
+            return gson.toJson(pos, Position.class);
+        } else {
+            HashMap<String, Object> result = new HashMap<String, Object>();
+            result.put("message", "Not found");
+
+            String payload = gson.toJson(result);
+
+            return payload;
+        }
     }
 
     // Endpoint to delete a position
     // DELETE /api/positions/:id
     @RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-    public String delete(@PathVariable int id) {
+    public String delete(@PathVariable String id) {
         /*
          * { code: 101, message: "successfully deleted" }
          */
+        positionRepository.deleteById(id);
+
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("code", 101);
         result.put("message", "Successfully deleted");
