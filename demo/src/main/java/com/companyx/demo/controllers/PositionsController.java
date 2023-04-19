@@ -6,7 +6,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,32 +34,32 @@ public class PositionsController {
     // Endpoint to return all positions
     // GET /api/positions
     @RequestMapping(value={"", "/"})
-    public String index() {
+    public ResponseEntity<String> index() {
         Gson gson = new Gson();
 
         List<HashMap<String, Object>> items = positionsService.getAll();
         String payload = gson.toJson(items);
 
-        return payload;
+        return new ResponseEntity<String>(payload, HttpStatus.OK);
     }
 
     // Endpoint to return a single position given an id
     // GET /api/positions/:id
     @RequestMapping(value="/{id}")
-    public String show(@PathVariable String id) {
+    public ResponseEntity<String> show(@PathVariable String id) {
         Gson gson = new Gson();
 
         if(positionsService.exists(id)) {
             String payload = gson.toJson(positionsService.getById(id));
 
-            return payload;
+            return new ResponseEntity<String>(payload, HttpStatus.OK);
         } else {
             HashMap<String, Object> result = new HashMap<String, Object>();
             result.put("message", "Not found");
 
             String payload = gson.toJson(result);
 
-            return payload;
+            return new ResponseEntity<String>(payload, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -66,7 +69,7 @@ public class PositionsController {
     // Enpoint to add a new position
     // POST /api/positions
     @RequestMapping(value={"", "/"}, method=RequestMethod.POST)
-    public String create(@RequestBody String params) {
+    public ResponseEntity<String> create(@RequestBody String params) {
         Gson gson = new Gson();
 
         HashMap<String, Object> requestParams = gson.fromJson(params, HashMap.class);
@@ -77,16 +80,16 @@ public class PositionsController {
         if (validator.valid()) {
             Position position = positionsService.create(requestParams);
 
-            return gson.toJson(position);
+            return new ResponseEntity<String>(gson.toJson(position, position.getClass()), HttpStatus.OK);
         } else {
-            return gson.toJson(validator.getErrors(), validator.getErrors().getClass());
+            return new ResponseEntity<String>(gson.toJson(validator.getErrors(), validator.getErrors().getClass()), HttpStatus.UNPROCESSABLE_ENTITY);
         }
     }
 
     // Endpoint to edit a position
     // PUT /api/positions/:id
     @RequestMapping(value="/{id}", method=RequestMethod.PUT)
-    public String edit(@PathVariable String id, @RequestBody String params) {
+    public ResponseEntity<String> edit(@PathVariable String id, @RequestBody String params) {
         Gson gson = new Gson();
         
         if(positionsService.exists(id)) {
@@ -94,21 +97,21 @@ public class PositionsController {
 
             Position pos = positionsService.update(id, requestParams);
 
-            return gson.toJson(pos, Position.class);
+            return new ResponseEntity<String>(gson.toJson(pos, Position.class), HttpStatus.OK);
         } else {
             HashMap<String, Object> result = new HashMap<String, Object>();
             result.put("message", "Not found");
 
             String payload = gson.toJson(result);
 
-            return payload;
+            return new ResponseEntity<String>(payload, HttpStatus.NOT_FOUND);
         }
     }
 
     // Endpoint to delete a position
     // DELETE /api/positions/:id
     @RequestMapping(value="/{id}", method=RequestMethod.DELETE)
-    public String delete(@PathVariable String id) {
+    public ResponseEntity<String> delete(@PathVariable String id) {
         /*
          * { code: 101, message: "successfully deleted" }
          */
@@ -122,7 +125,7 @@ public class PositionsController {
             Gson gson = new Gson();
             String payload = gson.toJson(result);
 
-            return payload;
+            return new ResponseEntity<String>(payload, HttpStatus.OK);
         } else {
             HashMap<String, Object> result = new HashMap<String, Object>();
             result.put("code", 401);
@@ -131,7 +134,7 @@ public class PositionsController {
             Gson gson = new Gson();
             String payload = gson.toJson(result);
 
-            return payload;
+            return new ResponseEntity<String>(payload, HttpStatus.NOT_FOUND);
         }
     }
 }
