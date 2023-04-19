@@ -19,6 +19,10 @@ public class PositionsService {
 
     public PositionsService() {}
 
+    public void deleteById(String id) {
+        positionRepository.deleteById(id);
+    }
+
     public Position create(HashMap<String, Object> params) {
         String id = UUID.randomUUID().toString();
         String name = params.get("name").toString();
@@ -27,6 +31,42 @@ public class PositionsService {
         pos = positionRepository.save(pos);
 
         return pos;
+    }
+
+    public Position update(Position pos, String name) {
+        pos.setName(name);
+
+        return this.update(pos);
+    }
+
+    public Position update(Position pos) {
+        positionRepository.save(pos);
+
+        return pos;
+    }
+
+    public Position update(String id, String name) {
+        Position pos = positionRepository.findById(id).get();
+
+        pos.setName(name);
+
+        return positionRepository.save(pos);
+    }
+
+    public Position update(String id, HashMap<String, Object> params) {
+        Position pos = positionRepository.findById(id).get();
+
+        return this.update(pos, params);
+    }
+
+    public Position update(Position pos, HashMap<String, Object> params) {
+        for (String key : params.keySet()) {
+            if (key.equals("name")) {
+                pos.setName(params.get("name").toString());
+            }
+        }
+
+        return positionRepository.save(pos);
     }
 
     public Position create(String name) {

@@ -88,16 +88,11 @@ public class PositionsController {
     @RequestMapping(value="/{id}", method=RequestMethod.PUT)
     public String edit(@PathVariable String id, @RequestBody String params) {
         Gson gson = new Gson();
-        Optional<Position> res = positionRepository.findById(id);
-
-        if(res.isPresent()) {
-            Position pos = res.get();
-
+        
+        if(positionsService.exists(id)) {
             HashMap<String, Object> requestParams = gson.fromJson(params, HashMap.class);
 
-            String name = requestParams.get("name").toString();
-
-            pos.setName(name);
+            Position pos = positionsService.update(id, requestParams);
 
             return gson.toJson(pos, Position.class);
         } else {
@@ -117,15 +112,26 @@ public class PositionsController {
         /*
          * { code: 101, message: "successfully deleted" }
          */
-        positionRepository.deleteById(id);
+        if (positionsService.exists(id)) {
+            positionsService.deleteById(id);
+            
+            HashMap<String, Object> result = new HashMap<String, Object>();
+            result.put("code", 101);
+            result.put("message", "Successfully deleted");
 
-        HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("code", 101);
-        result.put("message", "Successfully deleted");
+            Gson gson = new Gson();
+            String payload = gson.toJson(result);
 
-        Gson gson = new Gson();
-        String payload = gson.toJson(result);
+            return payload;
+        } else {
+            HashMap<String, Object> result = new HashMap<String, Object>();
+            result.put("code", 401);
+            result.put("message", "Something went wrong");
 
-        return payload;
+            Gson gson = new Gson();
+            String payload = gson.toJson(result);
+
+            return payload;
+        }
     }
 }
