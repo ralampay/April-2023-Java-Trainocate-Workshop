@@ -3,6 +3,7 @@ package com.companyx.demo.services;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,25 @@ public class PositionsService {
     private PositionRepository positionRepository;
 
     public PositionsService() {}
+
+    public Position create(HashMap<String, Object> params) {
+        String id = UUID.randomUUID().toString();
+        String name = params.get("name").toString();
+
+        Position pos = new Position(id, name);
+        pos = positionRepository.save(pos);
+
+        return pos;
+    }
+
+    public Position create(String name) {
+        String id = UUID.randomUUID().toString();
+
+        Position pos = new Position(id, name);
+        pos = positionRepository.save(pos);
+
+        return pos;
+    }
 
     public List<HashMap<String, Object>> getAll() {
         ArrayList<HashMap<String, Object>> items = new ArrayList<HashMap<String, Object>>();
@@ -42,5 +62,9 @@ public class PositionsService {
         item.put("name", pos.getName());
 
         return item;
+    }
+
+    public boolean exists(String id) {
+        return positionRepository.findById(id).isPresent();
     }
 }

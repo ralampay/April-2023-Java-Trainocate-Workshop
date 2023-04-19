@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.companyx.demo.models.Position;
+import com.companyx.demo.operations.ValidateCreatePosition;
 import com.companyx.demo.repositories.PositionRepository;
 import com.companyx.demo.services.PositionsService;
 import com.google.gson.Gson;
@@ -26,9 +27,6 @@ public class PositionsController {
 
     @Autowired
     private PositionsService positionsService;
-
-    @Autowired
-    private PositionRepository positionRepository;
     
     // Endpoint to return all positions
     // GET /api/positions
@@ -36,8 +34,8 @@ public class PositionsController {
     public String index() {
         Gson gson = new Gson();
 
-        List<Position> positions = positionRepository.findAll();
-        String payload = gson.toJson(positions);
+        List<HashMap<String, Object>> items = positionsService.getAll();
+        String payload = gson.toJson(items);
 
         return payload;
     }
@@ -47,10 +45,9 @@ public class PositionsController {
     @RequestMapping(value="/{id}")
     public String show(@PathVariable String id) {
         Gson gson = new Gson();
-        Optional<Position> res = positionRepository.findById(id);
 
-        if(res.isPresent()) {
-            String payload = gson.toJson(res.get());
+        if(positionsService.exists(id)) {
+            String payload = gson.toJson(positionsService.getById(id));
 
             return payload;
         } else {
@@ -74,16 +71,16 @@ public class PositionsController {
 
         HashMap<String, Object> requestParams = gson.fromJson(params, HashMap.class);
 
-        String newId = UUID.randomUUID().toString();
-        String newName = requestParams.get("name").toString();
+        ValidateCreatePosition validator = new ValidateCreatePosition(requestParams);
+        validator.run();
 
-        Position position = new Position(newId, newName);
+        if (validator.valid()) {
+            Position position = positionsService.create(requestParams);
 
-        positionRepository.save(position);
-
-        String payload = gson.toJson(position);
-
-        return payload;
+            return gson.toJson(position);
+        } else {
+            return gson.toJson(validator.getErrors(), validator.getErrors().getClass());
+        }
     }
 
     // Endpoint to edit a position
